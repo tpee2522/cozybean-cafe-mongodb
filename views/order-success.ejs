@@ -1,0 +1,16 @@
+<%- include('partials/header') %>
+
+<div class="card shadow-sm p-5 text-center mx-auto" style="max-width: 600px;">
+  <h2 class="text-success fw-bold mb-3">✅ สั่งซื้อเมนูสำเร็จ!</h2>
+  <p class="text-muted">ระบบได้บันทึกคำสั่งซื้อลงฐานข้อมูล MongoDB เรียบร้อยแล้ว</p>
+  <div class="bg-light p-3 rounded text-start my-3">
+    <p class="mb-1"><strong>รหัสคำสั่งซื้อ (Order ID):</strong> <code><%= order._id %></code></p>
+    <p class="mb-1"><strong>ชื่อผู้สั่งซื้อ:</strong> <%= order.customerName %></p>
+    <p class="mb-1"><strong>เบอร์โทร:</strong> <%= order.phone %></p>
+    <p class="mb-1"><strong>สถานที่จัดส่ง:</strong> <%= order.address %></p>
+    <p class="mb-0"><strong>ยอดรวมทั้งสิ้น:</strong> <%= order.totalAmount.toLocaleString() %> บาท</p>
+  </div>
+  <a href="/" class="btn btn-dark">กลับไปหน้าเมนูร้าน</a>
+</div>
+
+<%- include('partials/footer') %>

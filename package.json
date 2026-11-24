@@ -1,0 +1,20 @@
+{
+  "name": "mini-shop-mongodb",
+  "version": "1.0.0",
+  "description": "CozyBean Cafe Online Store with MongoDB",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node seed.js"
+  },
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.10",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "mongoose": "^9.12.1"
+  }
+}

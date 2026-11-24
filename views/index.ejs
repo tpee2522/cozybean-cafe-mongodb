@@ -1,0 +1,48 @@
+<%- include('partials/header') %>
+
+<form action="/" method="GET" class="row g-2 mb-4 bg-white p-3 rounded shadow-sm">
+  <div class="col-md-6">
+    <input type="text" name="search" class="form-control" placeholder="ค้นหาชื่อเมนูเครื่องดื่มหรือเบเกอรี่..." value="<%= search %>">
+  </div>
+  <div class="col-md-4">
+    <select name="category" class="form-select">
+      <option value="All" <%= selectedCategory === 'All' ? 'selected' : '' %>>ทุกหมวดหมู่ (ทั้งหมด)</option>
+      <% categories.forEach(cat => { %>
+        <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="col-md-2 d-grid">
+    <button type="submit" class="btn btn-dark">ค้นหา / กรอง</button>
+  </div>
+</form>
+
+<p class="text-muted">แสดงเมนูทั้งหมด <strong><%= products.length %></strong> รายการ</p>
+
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+  <% products.forEach(product => { %>
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+        <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="height: 180px; object-fit: cover;">
+        <div class="card-body d-flex flex-column">
+          <span class="badge bg-secondary align-self-start mb-2"><%= product.category %></span>
+          <h6 class="card-title fw-bold"><%= product.name %></h6>
+          <p class="text-danger fw-bold fs-5 mt-auto mb-1"><%= product.price.toLocaleString() %> ฿</p>
+          <small class="text-muted mb-3">คงเหลือ: <%= product.stock %> รายการ</small>
+          <div class="d-flex gap-2">
+            <a href="/product/<%= product._id %>" class="btn btn-outline-dark btn-sm flex-grow-1">รายละเอียด</a>
+            <% if (product.stock > 0) { %>
+              <form action="/cart/add/<%= product._id %>" method="POST">
+                <button type="submit" class="btn btn-success btn-sm">+ สั่งเลย</button>
+              </form>
+            <% } else { %>
+              <button class="btn btn-secondary btn-sm" disabled>หมด</button>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<%- include('partials/footer') %>

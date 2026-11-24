@@ -1,0 +1,107 @@
+<%- include('../partials/header') %>
+
+<h3 class="fw-bold mb-4">⚙️ ระบบจัดการร้านคาเฟ่ (Admin Dashboard)</h3>
+
+<div class="card shadow-sm p-4 mb-4">
+  <h5 class="fw-bold mb-3">➕ เพิ่มเมนูใหม่ลง MongoDB</h5>
+  <form action="/admin/products" method="POST" class="row g-3">
+    <div class="col-md-4">
+      <input type="text" name="name" class="form-control" placeholder="ชื่อเมนู" required>
+    </div>
+    <div class="col-md-3">
+      <input type="text" name="category" class="form-control" placeholder="หมวดหมู่ (เช่น Coffee, Tea & Matcha, Bakery)" required>
+    </div>
+    <div class="col-md-2">
+      <input type="number" name="price" class="form-control" placeholder="ราคา (บาท)" min="0" required>
+    </div>
+    <div class="col-md-3">
+      <input type="number" name="stock" class="form-control" placeholder="จำนวนสต็อก" min="0" required>
+    </div>
+    <div class="col-md-6">
+      <input type="text" name="image" class="form-control" placeholder="URL รูปภาพเมนู (เช่น https://...)">
+    </div>
+    <div class="col-md-4">
+      <input type="text" name="description" class="form-control" placeholder="รายละเอียดเมนู">
+    </div>
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-success fw-bold">เพิ่มเมนู</button>
+    </div>
+  </form>
+</div>
+
+<div class="card shadow-sm p-4 mb-5">
+  <h5 class="fw-bold mb-3">☕ รายการเมนูในระบบ (<%= products.length %> รายการ)</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>รูป</th>
+          <th>ชื่อเมนู / รายละเอียด</th>
+          <th>หมวดหมู่</th>
+          <th style="width: 110px;">ราคา (฿)</th>
+          <th style="width: 95px;">สต็อก</th>
+          <th>URL รูปภาพ</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(p => { %>
+          <tr>
+            <td>
+              <form id="update-<%= p._id %>" action="/admin/products/<%= p._id %>/update" method="POST"></form>
+              <img src="<%= p.image %>" width="50" height="40" style="object-fit: cover;">
+            </td>
+            <td>
+              <input form="update-<%= p._id %>" type="text" name="name" class="form-control form-control-sm mb-1" value="<%= p.name %>" required>
+              <input form="update-<%= p._id %>" type="text" name="description" class="form-control form-control-sm" value="<%= p.description %>" placeholder="รายละเอียด">
+            </td>
+            <td><input form="update-<%= p._id %>" type="text" name="category" class="form-control form-control-sm" value="<%= p.category %>" required></td>
+            <td><input form="update-<%= p._id %>" type="number" name="price" class="form-control form-control-sm" value="<%= p.price %>" min="0" required></td>
+            <td><input form="update-<%= p._id %>" type="number" name="stock" class="form-control form-control-sm" value="<%= p.stock %>" min="0" required></td>
+            <td><input form="update-<%= p._id %>" type="text" name="image" class="form-control form-control-sm" value="<%= p.image %>"></td>
+            <td class="text-nowrap">
+              <button form="update-<%= p._id %>" type="submit" class="btn btn-warning btn-sm">บันทึก</button>
+              <form action="/admin/products/<%= p._id %>/delete" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบเมนูนี้?')">
+                <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card shadow-sm p-4">
+  <h5 class="fw-bold mb-3">🧾 คำสั่งซื้อล่าสุด (Collection: orders)</h5>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>วันที่สั่งซื้อ</th>
+          <th>ลูกค้า</th>
+          <th>รายการเมนู</th>
+          <th>ยอดรวม</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
+            <td><%= o.customerName %> (<%= o.phone %>)<br><small class="text-muted"><%= o.address %></small></td>
+            <td>
+              <ul class="mb-0 ps-3">
+                <% o.items.forEach(i => { %>
+                  <li><%= i.name %> x <%= i.qty %> (<%= i.price %> ฿)</li>
+                <% }) %>
+              </ul>
+            </td>
+            <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
