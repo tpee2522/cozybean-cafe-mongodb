@@ -1,24 +1,24 @@
 body {
-  background: linear-gradient(rgba(28, 17, 11, 0.72), rgba(28, 17, 11, 0.72)),
+  background: linear-gradient(rgba(24, 15, 10, 0.88), rgba(24, 15, 10, 0.88)),
               url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1920&q=80') no-repeat center center fixed;
   background-size: cover;
   font-family: 'Sarabun', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ปรับตัวหนังสือหัวข้อและข้อความที่อยู่นอกการ์ดสีขาวให้อ่านง่ายบนพื้นหลังเมล็ดกาแฟ */
+/* ปรับตัวหนังสือหัวข้อและข้อความที่อยู่นอกการ์ดสีขาวให้อ่านง่ายบนพื้นหลังโทนเข้ม */
 main.container > h3,
 main.container > h4,
 main.container > p,
 main.container > div > p.text-muted {
-  color: #ffffff !important;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  color: #f5ebe0 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 /* คงตัวหนังสือในการ์ดและตารางสีขาวให้เข้มคมชัด */
 .card {
   border: none;
   border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.96);
+  background-color: rgba(255, 255, 255, 0.97);
 }
 
 .product-card {
@@ -27,7 +27,7 @@ main.container > div > p.text-muted {
 
 .product-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
 }
 
 .product-img {
