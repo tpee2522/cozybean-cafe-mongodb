@@ -169,7 +169,7 @@ router.get('/cart', async (req, res, next) => {
 
 router.post('/checkout', async (req, res, next) => {
   try {
-    const { customerName, phone, address } = req.body;
+    const { customerName, phone, address, paymentMethod } = req.body;
     const cart = req.session.cart || {};
     const productIds = Object.keys(cart);
     if (productIds.length === 0) return res.redirect('/cart');
@@ -192,6 +192,7 @@ router.post('/checkout', async (req, res, next) => {
       customerName,
       phone: phone ? phone.trim() : '',
       address,
+      paymentMethod: paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์',
       items: orderItems,
       totalAmount
     });
