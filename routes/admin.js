@@ -1,89 +1,124 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcryptjs');
-const User = require('../models/User');
-const Product = require('../models/Product');
-const Order = require('../models/Order');
+<%- include('../partials/header') %>
 
-function requireAdmin(req, res, next) {
-  if (req.session && req.session.isAdmin === true) return next();
-  return res.redirect('/admin/login');
-}
+<h3 class="fw-bold mb-4">⚙️ ระบบจัดการร้าน CozyBean Café (Admin Dashboard)</h3>
 
-router.get('/login', (req, res) => {
-  if (req.session.isAdmin) return res.redirect('/admin');
-  res.render('admin/login', { error: null });
-});
+<!-- ฟอร์มเพิ่มเมนูใหม่ -->
+<div class="card shadow-sm p-4 mb-4">
+  <h5 class="fw-bold mb-3">➕ เพิ่มเมนูใหม่</h5>
+  <form action="/admin/products" method="POST" class="row g-3">
+    <div class="col-md-3">
+      <label class="form-label">ชื่อเมนู</label>
+      <input type="text" name="name" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">หมวดหมู่</label>
+      <input type="text" name="category" class="form-control" placeholder="เช่น Coffee, Bakery" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">ราคา (บาท)</label>
+      <input type="number" name="price" class="form-control" min="0" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">สต็อก</label>
+      <input type="number" name="stock" class="form-control" min="0" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">ลิงก์รูปภาพ (URL)</label>
+      <input type="text" name="image" class="form-control" placeholder="https://...">
+    </div>
+    <div class="col-12">
+      <label class="form-label">รายละเอียดเมนู</label>
+      <input type="text" name="description" class="form-control">
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-success fw-bold">บันทึกเมนูใหม่</button>
+    </div>
+  </form>
+</div>
 
-router.post('/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email: email.toLowerCase(), role: 'admin' });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return res.render('admin/login', { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
-    }
-    req.session.isAdmin = true;
-    res.redirect('/admin');
-  } catch (err) {
-    next(err);
-  }
-});
+<!-- ตารางจัดการเมนูทั้งหมด -->
+<div class="card shadow-sm p-4 mb-4">
+  <h5 class="fw-bold mb-3">📋 จัดการรายการเมนูทั้งหมด (<%= products.length %> รายการ)</h5>
+  <div class="table-responsive">
+    <table class="table table-bordered align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th style="width: 22%;">ชื่อเมนู</th>
+          <th style="width: 15%;">หมวดหมู่</th>
+          <th style="width: 12%;">ราคา</th>
+          <th style="width: 10%;">สต็อก</th>
+          <th style="width: 25%;">รูปภาพ URL</th>
+          <th style="width: 16%;">จัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(p => { %>
+          <tr>
+            <form action="/admin/products/update/<%= p._id %>" method="POST">
+              <td><input type="text" name="name" value="<%= p.name %>" class="form-control form-control-sm" required></td>
+              <td><input type="text" name="category" value="<%= p.category %>" class="form-control form-control-sm" required></td>
+              <td><input type="number" name="price" value="<%= p.price %>" class="form-control form-control-sm" min="0" required></td>
+              <td><input type="number" name="stock" value="<%= p.stock %>" class="form-control form-control-sm" min="0" required></td>
+              <td><input type="text" name="image" value="<%= p.image %>" class="form-control form-control-sm"></td>
+              <td class="text-nowrap">
+                <button type="submit" class="btn btn-primary btn-sm">บันทึก</button>
+            </form>
+                <form action="/admin/products/delete/<%= p._id %>" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบเมนูนี้?');">
+                  <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+                </form>
+              </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-router.post('/logout', (req, res) => {
-  req.session.destroy(() => res.redirect('/'));
-});
+<!-- ตารางรายการคำสั่งซื้อล่าสุด -->
+<div class="card shadow-sm p-4">
+  <h5 class="fw-bold mb-3">🧾 รายการคำสั่งซื้อล่าสุด (<%= orders.length %> รายการ)</h5>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>วันที่สั่งซื้อ</th>
+          <th>ลูกค้า / เบอร์โทร</th>
+          <th>สถานที่จัดส่ง</th>
+          <th>รายการที่สั่ง</th>
+          <th>ยอดรวม</th>
+          <th>ชำระเงิน</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
+            <td>
+              <strong><%= o.customerName %></strong><br>
+              <small class="text-muted"><%= o.phone || '-' %></small>
+            </td>
+            <td><%= o.address %></td>
+            <td>
+              <ul class="mb-0 ps-3">
+                <% o.items.forEach(i => { %>
+                  <li><%= i.name %> x <%= i.qty %></li>
+                <% }) %>
+              </ul>
+            </td>
+            <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
+            <td><span class="badge bg-secondary"><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></span></td>
+            <td>
+              <form action="/admin/orders/delete/<%= o._id %>" method="POST" onsubmit="return confirm('ยืนยันการลบคำสั่งซื้อนี้?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">ลบออเดอร์</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-router.get('/', requireAdmin, async (req, res, next) => {
-  try {
-    const products = await Product.find().sort({ createdAt: -1 });
-    const orders = await Order.find().sort({ createdAt: -1 }).limit(20);
-    res.render('admin/dashboard', { products, orders });
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/products', requireAdmin, async (req, res, next) => {
-  try {
-    const { name, description, category, price, stock, image } = req.body;
-    await Product.create({
-      name,
-      description,
-      category,
-      price: Number(price),
-      stock: Number(stock),
-      image: image || 'https://placehold.co/400x300/4a2c2a/ffffff?text=New+Menu'
-    });
-    res.redirect('/admin');
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/products/:id/update', requireAdmin, async (req, res, next) => {
-  try {
-    const { name, description, category, price, stock, image } = req.body;
-    await Product.findByIdAndUpdate(req.params.id, {
-      name,
-      description,
-      category,
-      price: Number(price),
-      stock: Number(stock),
-      image
-    });
-    res.redirect('/admin');
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.post('/products/:id/delete', requireAdmin, async (req, res, next) => {
-  try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.redirect('/admin');
-  } catch (err) {
-    next(err);
-  }
-});
-
-module.exports = router;
+<script>
+  window.addEvent
