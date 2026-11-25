@@ -8,6 +8,7 @@
     <p class="mb-1"><strong>ชื่อผู้สั่งซื้อ:</strong> <%= order.customerName %></p>
     <p class="mb-1"><strong>เบอร์โทร:</strong> <%= order.phone %></p>
     <p class="mb-1"><strong>สถานที่จัดส่ง:</strong> <%= order.address %></p>
+    <p class="mb-1"><strong>วิธีชำระเงิน:</strong> <%= order.paymentMethod %></p>
     <p class="mb-0"><strong>ยอดรวมทั้งสิ้น:</strong> <%= order.totalAmount.toLocaleString() %> บาท</p>
   </div>
   <a href="/" class="btn btn-dark">กลับไปหน้าเมนูร้าน</a>
