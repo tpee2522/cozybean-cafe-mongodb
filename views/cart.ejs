@@ -59,8 +59,8 @@
   <input type="text" name="customerName" class="form-control" value="<%= currentUser ? currentUser.name : '' %>" required>
 </div>
 <div class="mb-2">
-  <label class="form-label">เบอร์โทรศัพท์</label>
-  <input type="text" name="phone" class="form-control" value="<%= currentUser ? currentUser.phone : '' %>" required>
+  <label class="form-label">เบอร์โทรศัพท์ (ไม่บังคับ)</label>
+  <input type="text" name="phone" class="form-control" value="<%= currentUser ? currentUser.phone : '' %>">
 </div>
           </div>
           <div class="mb-3">
