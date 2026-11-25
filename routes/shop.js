@@ -58,8 +58,9 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-// หน้าเข้าสู่ระบบลูกค้า
+// หน้าเข้าสู่ระบบ (รองรับทั้งลูกค้าและผู้ดูแลร้าน)
 router.get('/login', (req, res) => {
+  if (req.session.isAdmin) return res.redirect('/admin');
   if (req.session.user) return res.redirect('/');
   res.render('login', { error: null });
 });
@@ -67,9 +68,14 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email: email.toLowerCase().trim(), role: 'customer' });
+    const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       return res.render('login', { error: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
+    }
+
+    if (user.role === 'admin') {
+      req.session.isAdmin = true;
+      return res.redirect('/admin');
     }
 
     req.session.user = {
