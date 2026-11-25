@@ -190,7 +190,7 @@ router.post('/checkout', async (req, res, next) => {
     const newOrder = await Order.create({
       userId: req.session.user ? req.session.user._id : null,
       customerName,
-      phone,
+      phone: phone ? phone.trim() : '',
       address,
       items: orderItems,
       totalAmount
