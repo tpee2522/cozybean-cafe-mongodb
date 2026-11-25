@@ -18,8 +18,10 @@ app.use(session({
   cookie: { httpOnly: true, sameSite: 'lax' }
 }));
 app.use((req, res, next) => {
-  res.locals.isAdmin = req.session.isAdmin === true;
-  res.locals.cartCount = Object.values(req.session.cart || {}).reduce((a, b) => a + b, 0);
+  res.locals.isAdmin = req.session.isAdmin || false;
+  res.locals.currentUser = req.session.user || null;
+  const cart = req.session.cart || {};
+  res.locals.cartCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
   next();
 });
 app.use('/', shopRoutes);
