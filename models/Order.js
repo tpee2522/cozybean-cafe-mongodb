@@ -12,6 +12,7 @@ const orderSchema = new mongoose.Schema({
   customerName: { type: String, required: true, trim: true },
   phone: { type: String, trim: true, default: '' },
   address: { type: String, required: true, trim: true },
+  paymentMethod: { type: String, default: 'เงินสด / ชำระที่เคาน์เตอร์' },
   items: [orderItemSchema],
   totalAmount: { type: Number, required: true, min: 0 },
   status: { type: String, default: 'รอดำเนินการ' }
