@@ -1,9 +1,13 @@
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-image: linear-gradient(rgba(253, 250, 246, 0.86), rgba(253, 250, 246, 0.86)),
+                    url('https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1920&q=80') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
 }
+
+/* ปรับพื้นหลังกล่องการ์ดให้เป็นสีขาวทึบอ่านง่ายตัดกับลายเมล็ดกาแฟ */
 .card {
-  transition: transform 0.15s ease-in-out;
-}
-.card:hover {
-  transform: translateY(-3px);
+  background-color: rgba(255, 255, 255, 0.96) !important;
 }
