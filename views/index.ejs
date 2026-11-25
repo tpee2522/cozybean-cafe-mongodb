@@ -23,16 +23,10 @@
   <% products.forEach(product => { %>
     <div class="col">
       <div class="card h-100 shadow-sm">
-        <a href="/product/<%= product._id %>">
-          <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="height: 180px; object-fit: cover;">
-        </a>
+        <img src="<%= product.image %>" class="card-img-top" alt="<%= product.name %>" style="height: 180px; object-fit: cover;">
         <div class="card-body d-flex flex-column">
           <span class="badge bg-secondary align-self-start mb-2"><%= product.category %></span>
-          <h6 class="card-title fw-bold">
-  <a href="/product/<%= product._id %>" class="text-decoration-none text-dark">
-    <%= product.name %>
-  </a>
-</h6>
+          <h6 class="card-title fw-bold"><%= product.name %></h6>
           <p class="text-danger fw-bold fs-5 mt-auto mb-1"><%= product.price.toLocaleString() %> ฿</p>
           <small class="text-muted mb-3">คงเหลือ: <%= product.stock %> รายการ</small>
           <div class="d-flex gap-2">

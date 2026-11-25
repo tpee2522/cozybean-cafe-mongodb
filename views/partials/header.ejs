@@ -22,15 +22,28 @@
             🛒 ตะกร้าสินค้า <span class="badge bg-dark text-white"><%= cartCount %></span>
           </a>
         </li>
-        <% if (isAdmin) { %>
-          <li class="nav-item"><a class="btn btn-info btn-sm" href="/admin">⚙️ จัดการร้าน (Admin)</a></li>
+
+        <% if (currentUser) { %>
+          <li class="nav-item"><a class="nav-link text-warning fw-bold" href="/my-orders">🧾 ประวัติสั่งซื้อ (<%= currentUser.name %>)</a></li>
           <li class="nav-item">
-            <form action="/admin/logout" method="POST" class="d-inline">
-              <button class="btn btn-danger btn-sm">ออกจากระบบ</button>
+            <form action="/logout" method="POST" class="d-inline">
+              <button class="btn btn-outline-light btn-sm">ออกจากระบบ</button>
             </form>
           </li>
-        <% } else { %>
-          <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/admin/login">เข้าสู่ระบบ </a></li>
+        <% } else if (!isAdmin) { %>
+          <li class="nav-item"><a class="btn btn-outline-warning btn-sm" href="/register">สมัครสมาชิก</a></li>
+          <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/login">เข้าสู่ระบบ</a></li>
+        <% } %>
+
+        <% if (isAdmin) { %>
+          <li class="nav-item"><a class="btn btn-info btn-sm" href="/admin">⚙️ จัดการร้าน</a></li>
+          <li class="nav-item">
+            <form action="/admin/logout" method="POST" class="d-inline">
+              <button class="btn btn-danger btn-sm">ออกจากระบบ Admin</button>
+            </form>
+          </li>
+        <% } else if (!currentUser) { %>
+          <li class="nav-item"><a class="nav-link text-white-50 small" href="/admin/login">ผู้ดูแลร้าน</a></li>
         <% } %>
       </ul>
     </div>
