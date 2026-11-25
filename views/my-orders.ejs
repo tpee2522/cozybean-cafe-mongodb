@@ -17,6 +17,7 @@
             <th>รายการเมนู</th>
             <th>สถานที่จัดส่ง / โต๊ะ</th>
             <th>ยอดรวม</th>
+            <th>วิธีชำระเงิน</th>
             <th>สถานะ</th>
           </tr>
         </thead>
@@ -33,6 +34,7 @@
               </td>
               <td><%= o.address %></td>
               <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
+              <td><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></td>
               <td><span class="badge bg-info text-dark"><%= o.status %></span></td>
             </tr>
           <% }) %>
