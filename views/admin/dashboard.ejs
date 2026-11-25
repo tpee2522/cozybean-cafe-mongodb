@@ -103,5 +103,21 @@
     </table>
   </div>
 </div>
+<script>
+  // จำตำแหน่ง Scroll ก่อนกดบันทึก หรือ ลบ
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', () => {
+      sessionStorage.setItem('adminScrollY', window.scrollY);
+    });
+  });
 
+  // เลื่อนกลับมาตำแหน่งเดิมหลังหน้าเว็บโหลดเสร็จ
+  window.addEventListener('load', () => {
+    const scrollY = sessionStorage.getItem('adminScrollY');
+    if (scrollY !== null) {
+      window.scrollTo({ top: parseInt(scrollY, 10), behavior: 'instant' });
+      sessionStorage.removeItem('adminScrollY');
+    }
+  });
+</script>
 <%- include('../partials/footer') %>
