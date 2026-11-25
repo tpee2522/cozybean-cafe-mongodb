@@ -22,7 +22,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// ================= ระบบสมาชิกสำหรับลูกค้า =================
+// ================= ระบบสมาชิกและการเข้าสู่ระบบ =================
 
 // หน้าสมัครสมาชิก
 router.get('/register', (req, res) => {
@@ -46,6 +46,7 @@ router.post('/register', async (req, res, next) => {
       passwordHash,
       role: 'customer'
     });
+
     req.session.user = {
       _id: newUser._id,
       name: newUser.name,
