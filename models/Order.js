@@ -10,7 +10,7 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   customerName: { type: String, required: true, trim: true },
-  phone: { type: String, required: true, trim: true },
+  phone: { type: String, trim: true, default: '' },
   address: { type: String, required: true, trim: true },
   items: [orderItemSchema],
   totalAmount: { type: Number, required: true, min: 0 },
