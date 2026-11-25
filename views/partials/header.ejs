@@ -30,20 +30,16 @@
               <button class="btn btn-outline-light btn-sm">ออกจากระบบ</button>
             </form>
           </li>
-        <% } else if (!isAdmin) { %>
-          <li class="nav-item"><a class="btn btn-outline-warning btn-sm" href="/register">สมัครสมาชิก</a></li>
-          <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/login">เข้าสู่ระบบ</a></li>
-        <% } %>
-
-        <% if (isAdmin) { %>
+        <% } else if (isAdmin) { %>
           <li class="nav-item"><a class="btn btn-info btn-sm" href="/admin">⚙️ จัดการร้าน</a></li>
           <li class="nav-item">
             <form action="/admin/logout" method="POST" class="d-inline">
               <button class="btn btn-danger btn-sm">ออกจากระบบ Admin</button>
             </form>
           </li>
-        <% } else if (!currentUser) { %>
-          <li class="nav-item"><a class="nav-link text-white-50 small" href="/admin/login">ผู้ดูแลร้าน</a></li>
+        <% } else { %>
+          <li class="nav-item"><a class="btn btn-outline-warning btn-sm" href="/register">สมัครสมาชิก</a></li>
+          <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="/login">เข้าสู่ระบบ</a></li>
         <% } %>
       </ul>
     </div>
