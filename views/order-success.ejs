@@ -5,10 +5,8 @@
   <p class="text-muted mb-3">รหัสคำสั่งซื้อ: <strong><%= order._id %></strong></p>
 
   <div class="alert alert-info py-2 mb-3">
-    📢 <strong>สถานะปัจจุบัน:</strong> <%= order.status %>
-    <% if (currentUser) { %>
-      <br><small>คุณสามารถติดตามสถานะ "ร้านได้รับออเดอร์แล้ว" ได้ที่เมนู <strong>ประวัติสั่งซื้อ</strong> ด้านบน</small>
-    <% } %>
+    📢 <strong>สถานะปัจจุบัน:</strong> <%= order.status %><br>
+    <small>เมื่อได้รับสินค้าแล้ว สามารถกดปุ่มด้านล่างเพื่อยืนยัน <strong>"ได้รับออเดอร์แล้ว"</strong> ได้ทันที</small>
   </div>
 
   <div class="text-start border rounded p-3 bg-light mb-3">
@@ -28,7 +26,9 @@
   <div class="d-flex justify-content-center gap-2">
     <a href="/" class="btn btn-dark">กลับไปหน้าร้าน</a>
     <% if (currentUser) { %>
-      <a href="/my-orders" class="btn btn-success">ดูสถานะออเดอร์ของฉัน</a>
+      <a href="/my-orders" class="btn btn-success fw-bold">ดูสถานะ / ยืนยันรับออเดอร์</a>
+    <% } else { %>
+      <a href="/track-order?q=<%= order._id %>" class="btn btn-success fw-bold">ดูสถานะ / ยืนยันรับออเดอร์</a>
     <% } %>
   </div>
 </div>
