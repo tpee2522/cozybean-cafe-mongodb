@@ -97,17 +97,19 @@ router.post('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// หน้าประวัติการสั่งซื้อของลูกค้า
-router.get('/my-orders', async (req, res, next) => {
+// ลูกค้ากดยืนยันว่าได้รับออเดอร์แล้ว
+router.post('/my-orders/receive/:id', async (req, res, next) => {
   try {
     if (!req.session.user) return res.redirect('/login');
-    const orders = await Order.find({ userId: req.session.user._id }).sort({ createdAt: -1 });
-    res.render('my-orders', { orders });
+    await Order.findOneAndUpdate(
+      { _id: req.params.id, userId: req.session.user._id },
+      { status: 'ได้รับออเดอร์แล้ว' }
+    );
+    res.redirect('/my-orders');
   } catch (err) {
     next(err);
   }
 });
-
 // ================= สินค้าและตะกร้า =================
 
 router.get('/product/:id', async (req, res, next) => {
