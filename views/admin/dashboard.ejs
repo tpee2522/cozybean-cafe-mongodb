@@ -94,7 +94,7 @@
       <tbody>
         <% orders.forEach(o => { %>
           <tr>
-            <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
+            <td><%= new Date(o.createdAt).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' }) %></td>
             <td>
               <strong><%= o.customerName %></strong><br>
               <small class="text-muted"><%= o.phone || '-' %></small>
