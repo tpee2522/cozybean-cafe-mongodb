@@ -110,13 +110,11 @@
             <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
             <td><span class="badge bg-secondary"><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></span></td>
             <td>
-              <form action="/admin/orders/status/<%= o._id %>" method="POST">
-                <select name="status" class="form-select form-select-sm fw-bold <%= o.status === 'ได้รับออเดอร์แล้ว' ? 'border-success text-success' : (o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า' ? 'border-primary text-primary' : 'border-warning text-dark') %>" onchange="this.form.submit()">
-                  <option value="รอดำเนินการ" <%= o.status === 'รอดำเนินการ' ? 'selected' : '' %>>⏳ รอดำเนินการ</option>
-                  <option value="ได้รับออเดอร์แล้ว" <%= o.status === 'ได้รับออเดอร์แล้ว' ? 'selected' : '' %>>✅ ได้รับออเดอร์แล้ว</option>
-                  <option value="จัดส่งสำเร็จ / พร้อมรับสินค้า" <%= o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า' ? 'selected' : '' %>>🎉 จัดส่งสำเร็จ / พร้อมรับ</option>
-                </select>
-              </form>
+              <% if (o.status === 'ได้รับออเดอร์แล้ว') { %>
+                <span class="badge bg-success">✅ ได้รับออเดอร์แล้ว</span>
+              <% } else { %>
+                <span class="badge bg-warning text-dark">⏳ <%= o.status %></span>
+              <% } %>
             </td>
             <td>
               <form action="/admin/orders/delete/<%= o._id %>" method="POST" onsubmit="return confirm('ยืนยันการลบคำสั่งซื้อนี้?');">
