@@ -24,7 +24,7 @@
         <tbody>
           <% orders.forEach(o => { %>
             <tr>
-              <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
+              <td><%= new Date(o.createdAt).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' }) %></td>
               <td>
                 <ul class="mb-0 ps-3">
                   <% o.items.forEach(i => { %>
