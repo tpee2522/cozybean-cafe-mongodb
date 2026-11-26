@@ -37,11 +37,16 @@
               <td><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></td>
               <td>
                 <% if (o.status === 'ได้รับออเดอร์แล้ว') { %>
-                  <span class="badge bg-success fs-6">✅ ร้านได้รับออเดอร์แล้ว (กำลังเตรียม)</span>
-                <% } else if (o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า') { %>
-                  <span class="badge bg-primary fs-6">🎉 จัดส่งสำเร็จ / พร้อมรับสินค้า</span>
+                  <span class="badge bg-success fs-6">✅ ได้รับออเดอร์แล้ว</span>
                 <% } else { %>
-                  <span class="badge bg-warning text-dark fs-6">⏳ <%= o.status %></span>
+                  <div class="mb-1">
+                    <span class="badge bg-warning text-dark">⏳ <%= o.status %></span>
+                  </div>
+                  <form action="/my-orders/receive/<%= o._id %>" method="POST" onsubmit="return confirm('ยืนยันว่าคุณได้รับออเดอร์นี้เรียบร้อยแล้ว?');">
+                    <button type="submit" class="btn btn-success btn-sm fw-bold">
+                      ✅ กดยืนยันได้รับออเดอร์แล้ว
+                    </button>
+                  </form>
                 <% } %>
               </td>
             </tr>
