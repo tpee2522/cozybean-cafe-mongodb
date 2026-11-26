@@ -18,7 +18,7 @@
             <th>สถานที่จัดส่ง / โต๊ะ</th>
             <th>ยอดรวม</th>
             <th>วิธีชำระเงิน</th>
-            <th>สถานะ</th>
+            <th>สถานะออเดอร์</th>
           </tr>
         </thead>
         <tbody>
@@ -35,7 +35,15 @@
               <td><%= o.address %></td>
               <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
               <td><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></td>
-              <td><span class="badge bg-info text-dark"><%= o.status %></span></td>
+              <td>
+                <% if (o.status === 'ได้รับออเดอร์แล้ว') { %>
+                  <span class="badge bg-success fs-6">✅ ร้านได้รับออเดอร์แล้ว (กำลังเตรียม)</span>
+                <% } else if (o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า') { %>
+                  <span class="badge bg-primary fs-6">🎉 จัดส่งสำเร็จ / พร้อมรับสินค้า</span>
+                <% } else { %>
+                  <span class="badge bg-warning text-dark fs-6">⏳ <%= o.status %></span>
+                <% } %>
+              </td>
             </tr>
           <% }) %>
         </tbody>
