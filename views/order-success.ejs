@@ -1,17 +1,36 @@
 <%- include('partials/header') %>
 
-<div class="card shadow-sm p-5 text-center mx-auto" style="max-width: 600px;">
-  <h2 class="text-success fw-bold mb-3">✅ สั่งซื้อเมนูสำเร็จ!</h2>
-  <p class="text-muted">ระบบได้บันทึกคำสั่งซื้อลงฐานข้อมูล MongoDB เรียบร้อยแล้ว</p>
-  <div class="bg-light p-3 rounded text-start my-3">
-    <p class="mb-1"><strong>รหัสคำสั่งซื้อ (Order ID):</strong> <code><%= order._id %></code></p>
-    <p class="mb-1"><strong>ชื่อผู้สั่งซื้อ:</strong> <%= order.customerName %></p>
-    <p class="mb-1"><strong>เบอร์โทร:</strong> <%= order.phone %></p>
-    <p class="mb-1"><strong>สถานที่จัดส่ง:</strong> <%= order.address %></p>
-    <p class="mb-1"><strong>วิธีชำระเงิน:</strong> <%= order.paymentMethod %></p>
-    <p class="mb-0"><strong>ยอดรวมทั้งสิ้น:</strong> <%= order.totalAmount.toLocaleString() %> บาท</p>
+<div class="card shadow-sm p-4 mx-auto text-center" style="max-width: 550px;">
+  <h2 class="text-success fw-bold mb-2">✅ สั่งซื้อสำเร็จ!</h2>
+  <p class="text-muted mb-3">รหัสคำสั่งซื้อ: <strong><%= order._id %></strong></p>
+
+  <div class="alert alert-info py-2 mb-3">
+    📢 <strong>สถานะปัจจุบัน:</strong> <%= order.status %>
+    <% if (currentUser) { %>
+      <br><small>คุณสามารถติดตามสถานะ "ร้านได้รับออเดอร์แล้ว" ได้ที่เมนู <strong>ประวัติสั่งซื้อ</strong> ด้านบน</small>
+    <% } %>
   </div>
-  <a href="/" class="btn btn-dark">กลับไปหน้าเมนูร้าน</a>
+
+  <div class="text-start border rounded p-3 bg-light mb-3">
+    <p class="mb-1"><strong>ชื่อผู้สั่ง:</strong> <%= order.customerName %></p>
+    <p class="mb-1"><strong>เบอร์โทร:</strong> <%= order.phone || '-' %></p>
+    <p class="mb-1"><strong>สถานที่จัดส่ง:</strong> <%= order.address %></p>
+    <p class="mb-2"><strong>วิธีชำระเงิน:</strong> <%= order.paymentMethod %></p>
+    <hr class="my-2">
+    <ul class="mb-2 ps-3">
+      <% order.items.forEach(item => { %>
+        <li><%= item.name %> x <%= item.qty %> = <%= (item.price * item.qty).toLocaleString() %> บาท</li>
+      <% }) %>
+    </ul>
+    <h5 class="text-danger fw-bold mb-0">ยอดสุทธิ: <%= order.totalAmount.toLocaleString() %> บาท</h5>
+  </div>
+
+  <div class="d-flex justify-content-center gap-2">
+    <a href="/" class="btn btn-dark">กลับไปหน้าร้าน</a>
+    <% if (currentUser) { %>
+      <a href="/my-orders" class="btn btn-success">ดูสถานะออเดอร์ของฉัน</a>
+    <% } %>
+  </div>
 </div>
 
 <%- include('partials/footer') %>
