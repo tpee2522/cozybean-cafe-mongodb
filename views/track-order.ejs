@@ -37,7 +37,7 @@
             <tr>
               <td>
                 <small class="text-muted d-block">#<%= o._id %></small>
-                <%= new Date(o.createdAt).toLocaleString('th-TH') %>
+                <%= new Date(o.createdAt).toLocaleString('th-TH', { timeZone: 'Asia/Bangkok' }) %>
               </td>
               <td>
                 <strong><%= o.customerName %></strong><br>
