@@ -1,68 +1,126 @@
 <%- include('../partials/header') %>
 
-<h3 class="fw-bold mb-4">⚙️ ระบบจัดการร้านคาเฟ่ </h3>
+<h3 class="fw-bold mb-4">⚙️ ระบบจัดการร้าน CozyBean Café (Admin Dashboard)</h3>
 
+<!-- ฟอร์มเพิ่มเมนูใหม่ -->
 <div class="card shadow-sm p-4 mb-4">
-  <h5 class="fw-bold mb-3">➕ เพิ่มเมนูใหม่ </h5>
+  <h5 class="fw-bold mb-3">➕ เพิ่มเมนูใหม่</h5>
   <form action="/admin/products" method="POST" class="row g-3">
-    <div class="col-md-4">
-      <input type="text" name="name" class="form-control" placeholder="ชื่อเมนู" required>
-    </div>
     <div class="col-md-3">
-      <input type="text" name="category" class="form-control" placeholder="หมวดหมู่ (เช่น Coffee, Tea & Matcha, Bakery)" required>
+      <label class="form-label">ชื่อเมนู</label>
+      <input type="text" name="name" class="form-control" required>
     </div>
     <div class="col-md-2">
-      <input type="number" name="price" class="form-control" placeholder="ราคา (บาท)" min="0" required>
+      <label class="form-label">หมวดหมู่</label>
+      <input type="text" name="category" class="form-control" placeholder="เช่น Coffee, Bakery" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">ราคา (บาท)</label>
+      <input type="number" name="price" class="form-control" min="0" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">สต็อก</label>
+      <input type="number" name="stock" class="form-control" min="0" required>
     </div>
     <div class="col-md-3">
-      <input type="number" name="stock" class="form-control" placeholder="จำนวนสต็อก" min="0" required>
+      <label class="form-label">ลิงก์รูปภาพ (URL)</label>
+      <input type="text" name="image" class="form-control" placeholder="https://...">
     </div>
-    <div class="col-md-6">
-      <input type="text" name="image" class="form-control" placeholder="URL รูปภาพเมนู (เช่น https://...)">
+    <div class="col-12">
+      <label class="form-label">รายละเอียดเมนู</label>
+      <input type="text" name="description" class="form-control">
     </div>
-    <div class="col-md-4">
-      <input type="text" name="description" class="form-control" placeholder="รายละเอียดเมนู">
-    </div>
-    <div class="col-md-2 d-grid">
-      <button type="submit" class="btn btn-success fw-bold">เพิ่มเมนู</button>
+    <div class="col-12">
+      <button type="submit" class="btn btn-success fw-bold">บันทึกเมนูใหม่</button>
     </div>
   </form>
 </div>
 
-<div class="card shadow-sm p-4 mb-5">
-  <h5 class="fw-bold mb-3">☕ รายการเมนูในระบบ (<%= products.length %> รายการ)</h5>
+<!-- ตารางจัดการเมนูทั้งหมด -->
+<div class="card shadow-sm p-4 mb-4">
+  <h5 class="fw-bold mb-3">📋 จัดการรายการเมนูทั้งหมด (<%= products.length %> รายการ)</h5>
   <div class="table-responsive">
     <table class="table table-bordered align-middle">
       <thead class="table-dark">
         <tr>
-          <th>รูป</th>
-          <th>ชื่อเมนู / รายละเอียด</th>
-          <th>หมวดหมู่</th>
-          <th style="width: 110px;">ราคา (฿)</th>
-          <th style="width: 95px;">สต็อก</th>
-          <th>URL รูปภาพ</th>
-          <th>จัดการ</th>
+          <th style="width: 22%;">ชื่อเมนู</th>
+          <th style="width: 15%;">หมวดหมู่</th>
+          <th style="width: 12%;">ราคา</th>
+          <th style="width: 10%;">สต็อก</th>
+          <th style="width: 25%;">รูปภาพ URL</th>
+          <th style="width: 16%;">จัดการ</th>
         </tr>
       </thead>
       <tbody>
         <% products.forEach(p => { %>
           <tr>
+            <form action="/admin/products/update/<%= p._id %>" method="POST">
+              <td><input type="text" name="name" value="<%= p.name %>" class="form-control form-control-sm" required></td>
+              <td><input type="text" name="category" value="<%= p.category %>" class="form-control form-control-sm" required></td>
+              <td><input type="number" name="price" value="<%= p.price %>" class="form-control form-control-sm" min="0" required></td>
+              <td><input type="number" name="stock" value="<%= p.stock %>" class="form-control form-control-sm" min="0" required></td>
+              <td><input type="text" name="image" value="<%= p.image %>" class="form-control form-control-sm"></td>
+              <td class="text-nowrap">
+                <button type="submit" class="btn btn-primary btn-sm">บันทึก</button>
+            </form>
+                <form action="/admin/products/delete/<%= p._id %>" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบเมนูนี้?');">
+                  <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+                </form>
+              </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ตารางรายการคำสั่งซื้อล่าสุด -->
+<div class="card shadow-sm p-4">
+  <h5 class="fw-bold mb-3">🧾 รายการคำสั่งซื้อล่าสุด (<%= orders.length %> รายการ)</h5>
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>วันที่สั่งซื้อ</th>
+          <th>ลูกค้า / เบอร์โทร</th>
+          <th>สถานที่จัดส่ง</th>
+          <th>รายการที่สั่ง</th>
+          <th>ยอดรวม</th>
+          <th>ชำระเงิน</th>
+          <th>สถานะออเดอร์</th>
+          <th>จัดการ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(o => { %>
+          <tr>
+            <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
             <td>
-              <form id="update-<%= p._id %>" action="/admin/products/<%= p._id %>/update" method="POST"></form>
-              <img src="<%= p.image %>" width="50" height="40" style="object-fit: cover;">
+              <strong><%= o.customerName %></strong><br>
+              <small class="text-muted"><%= o.phone || '-' %></small>
+            </td>
+            <td><%= o.address %></td>
+            <td>
+              <ul class="mb-0 ps-3">
+                <% o.items.forEach(i => { %>
+                  <li><%= i.name %> x <%= i.qty %></li>
+                <% }) %>
+              </ul>
+            </td>
+            <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
+            <td><span class="badge bg-secondary"><%= o.paymentMethod || 'เงินสด / ชำระที่เคาน์เตอร์' %></span></td>
+            <td>
+              <form action="/admin/orders/status/<%= o._id %>" method="POST">
+                <select name="status" class="form-select form-select-sm fw-bold <%= o.status === 'ได้รับออเดอร์แล้ว' ? 'border-success text-success' : (o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า' ? 'border-primary text-primary' : 'border-warning text-dark') %>" onchange="this.form.submit()">
+                  <option value="รอดำเนินการ" <%= o.status === 'รอดำเนินการ' ? 'selected' : '' %>>⏳ รอดำเนินการ</option>
+                  <option value="ได้รับออเดอร์แล้ว" <%= o.status === 'ได้รับออเดอร์แล้ว' ? 'selected' : '' %>>✅ ได้รับออเดอร์แล้ว</option>
+                  <option value="จัดส่งสำเร็จ / พร้อมรับสินค้า" <%= o.status === 'จัดส่งสำเร็จ / พร้อมรับสินค้า' ? 'selected' : '' %>>🎉 จัดส่งสำเร็จ / พร้อมรับ</option>
+                </select>
+              </form>
             </td>
             <td>
-              <input form="update-<%= p._id %>" type="text" name="name" class="form-control form-control-sm mb-1" value="<%= p.name %>" required>
-              <input form="update-<%= p._id %>" type="text" name="description" class="form-control form-control-sm" value="<%= p.description %>" placeholder="รายละเอียด">
-            </td>
-            <td><input form="update-<%= p._id %>" type="text" name="category" class="form-control form-control-sm" value="<%= p.category %>" required></td>
-            <td><input form="update-<%= p._id %>" type="number" name="price" class="form-control form-control-sm" value="<%= p.price %>" min="0" required></td>
-            <td><input form="update-<%= p._id %>" type="number" name="stock" class="form-control form-control-sm" value="<%= p.stock %>" min="0" required></td>
-            <td><input form="update-<%= p._id %>" type="text" name="image" class="form-control form-control-sm" value="<%= p.image %>"></td>
-            <td class="text-nowrap">
-              <button form="update-<%= p._id %>" type="submit" class="btn btn-warning btn-sm">บันทึก</button>
-              <form action="/admin/products/<%= p._id %>/delete" method="POST" class="d-inline" onsubmit="return confirm('ยืนยันการลบเมนูนี้?')">
-                <button type="submit" class="btn btn-danger btn-sm">ลบ</button>
+              <form action="/admin/orders/delete/<%= o._id %>" method="POST" onsubmit="return confirm('ยืนยันการลบคำสั่งซื้อนี้?');">
+                <button type="submit" class="btn btn-outline-danger btn-sm">ลบ</button>
               </form>
             </td>
           </tr>
@@ -72,36 +130,24 @@
   </div>
 </div>
 
-<div class="card shadow-sm p-4">
-  <h5 class="fw-bold mb-3">🧾 คำสั่งซื้อล่าสุด (Collection: orders)</h5>
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>วันที่สั่งซื้อ</th>
-          <th>ลูกค้า</th>
-          <th>รายการเมนู</th>
-          <th>ยอดรวม</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% orders.forEach(o => { %>
-          <tr>
-            <td><%= new Date(o.createdAt).toLocaleString('th-TH') %></td>
-            <td><%= o.customerName %> (<%= o.phone %>)<br><small class="text-muted"><%= o.address %></small></td>
-            <td>
-              <ul class="mb-0 ps-3">
-                <% o.items.forEach(i => { %>
-                  <li><%= i.name %> x <%= i.qty %> (<%= i.price %> ฿)</li>
-                <% }) %>
-              </ul>
-            </td>
-            <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
-</div>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedPos = sessionStorage.getItem('adminScrollPos');
+    if (savedPos) {
+      window.scrollTo(0, parseInt(savedPos, 10));
+      sessionStorage.removeItem('adminScrollPos');
+    }
+  });
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', () => {
+      sessionStorage.setItem('adminScrollPos', window.scrollY);
+    });
+  });
+  document.querySelectorAll('select[name="status"]').forEach(sel => {
+    sel.addEventListener('change', () => {
+      sessionStorage.setItem('adminScrollPos', window.scrollY);
+    });
+  });
+</script>
 
 <%- include('../partials/footer') %>
