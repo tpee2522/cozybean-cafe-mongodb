@@ -1,0 +1,78 @@
+<%- include('partials/header') %>
+
+<h3 class="fw-bold mb-4">🔍 เช็กสถานะคำสั่งซื้อ (สำหรับลูกค้าทั่วไป)</h3>
+
+<div class="card shadow-sm p-4 mb-4">
+  <form action="/track-order" method="GET" class="row g-2 align-items-center">
+    <div class="col-md-9">
+      <input type="text" name="q" class="form-control" value="<%= q %>" placeholder="กรอกรหัสคำสั่งซื้อ (Order ID), ชื่อลูกค้า หรือ เบอร์โทรศัพท์...">
+    </div>
+    <div class="col-md-3 d-grid">
+      <button type="submit" class="btn btn-dark fw-bold">ค้นหาออเดอร์</button>
+    </div>
+  </form>
+</div>
+
+<% if (orders.length === 0) { %>
+  <div class="card shadow-sm p-5 text-center">
+    <p class="text-muted mb-2">ไม่พบรายการคำสั่งซื้อ</p>
+    <small class="text-muted">ลองค้นหาด้วย <strong>รหัสคำสั่งซื้อ</strong> หรือ <strong>ชื่อผู้สั่ง</strong> ที่ระบุตอนชำระเงิน</small>
+  </div>
+<% } else { %>
+  <div class="card shadow-sm p-4">
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>รหัสออเดอร์ / วันที่</th>
+            <th>ผู้สั่ง</th>
+            <th>รายการเมนู</th>
+            <th>สถานที่จัดส่ง</th>
+            <th>ยอดรวม</th>
+            <th>สถานะออเดอร์</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% orders.forEach(o => { %>
+            <tr>
+              <td>
+                <small class="text-muted d-block">#<%= o._id %></small>
+                <%= new Date(o.createdAt).toLocaleString('th-TH') %>
+              </td>
+              <td>
+                <strong><%= o.customerName %></strong><br>
+                <small class="text-muted"><%= o.phone || '-' %></small>
+              </td>
+              <td>
+                <ul class="mb-0 ps-3">
+                  <% o.items.forEach(i => { %>
+                    <li><%= i.name %> x <%= i.qty %> (<%= i.price %> ฿)</li>
+                  <% }) %>
+                </ul>
+              </td>
+              <td><%= o.address %></td>
+              <td class="fw-bold text-danger"><%= o.totalAmount.toLocaleString() %> ฿</td>
+              <td>
+                <% if (o.status === 'ได้รับออเดอร์แล้ว') { %>
+                  <span class="badge bg-success fs-6">✅ ได้รับออเดอร์แล้ว</span>
+                <% } else { %>
+                  <div class="mb-1">
+                    <span class="badge bg-warning text-dark">⏳ <%= o.status %></span>
+                  </div>
+                  <form action="/track-order/receive/<%= o._id %>" method="POST" onsubmit="return confirm('ยืนยันว่าคุณได้รับออเดอร์นี้เรียบร้อยแล้ว?');">
+                    <input type="hidden" name="q" value="<%= q %>">
+                    <button type="submit" class="btn btn-success btn-sm fw-bold">
+                      ✅ กดยืนยันได้รับออเดอร์แล้ว
+                    </button>
+                  </form>
+                <% } %>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<%- include('partials/footer') %>
