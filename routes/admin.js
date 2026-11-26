@@ -72,6 +72,17 @@ router.post('/products/delete/:id', requireAdmin, async (req, res, next) => {
   }
 });
 
+// อัปเดตสถานะคำสั่งซื้อ
+router.post('/orders/status/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    await Order.findByIdAndUpdate(req.params.id, { status });
+    res.redirect('/admin');
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.post('/orders/delete/:id', requireAdmin, async (req, res, next) => {
   try {
     await Order.findByIdAndDelete(req.params.id);
