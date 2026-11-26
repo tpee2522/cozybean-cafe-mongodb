@@ -97,18 +97,21 @@ router.post('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// หน้าประวัติการสั่งซื้อของลูกค้า (สมาชิก)
+// หน้าประวัติการสั่งซื้อของลูกค้า (สมาชิก) — แสดงเฉพาะรายการที่ยังไม่กดรับออเดอร์
 router.get('/my-orders', async (req, res, next) => {
   try {
     if (!req.session.user) return res.redirect('/login');
-    const orders = await Order.find({ userId: req.session.user._id }).sort({ createdAt: -1 });
+    const orders = await Order.find({
+      userId: req.session.user._id,
+      status: { $ne: 'ได้รับออเดอร์แล้ว' }
+    }).sort({ createdAt: -1 });
     res.render('my-orders', { orders });
   } catch (err) {
     next(err);
   }
 });
 
-// ลูกค้า (สมาชิก) กดยืนยันว่าได้รับออเดอร์แล้ว
+// ลูกค้า (สมาชิก) กดยืนยันว่าได้รับออเดอร์แล้ว (อัปเดตสถานะแล้วหายไปจากหน้าลูกค้าอัตโนมัติ)
 router.post('/my-orders/receive/:id', async (req, res, next) => {
   try {
     if (!req.session.user) return res.redirect('/login');
@@ -132,9 +135,13 @@ router.get('/track-order', async (req, res, next) => {
 
     if (q) {
       if (mongoose.Types.ObjectId.isValid(q)) {
-        orders = await Order.find({ _id: q }).sort({ createdAt: -1 });
+        orders = await Order.find({
+          _id: q,
+          status: { $ne: 'ได้รับออเดอร์แล้ว' }
+        }).sort({ createdAt: -1 });
       } else {
         orders = await Order.find({
+          status: { $ne: 'ได้รับออเดอร์แล้ว' },
           $or: [
             { customerName: { $regex: q, $options: 'i' } },
             { phone: { $regex: q, $options: 'i' } }
@@ -142,7 +149,10 @@ router.get('/track-order', async (req, res, next) => {
         }).sort({ createdAt: -1 });
       }
     } else if (guestOrderIds.length > 0) {
-      orders = await Order.find({ _id: { $in: guestOrderIds } }).sort({ createdAt: -1 });
+      orders = await Order.find({
+        _id: { $in: guestOrderIds },
+        status: { $ne: 'ได้รับออเดอร์แล้ว' }
+      }).sort({ createdAt: -1 });
     }
 
     res.render('track-order', { orders, q });
@@ -151,11 +161,14 @@ router.get('/track-order', async (req, res, next) => {
   }
 });
 
-// ลูกค้าทั่วไปกดยืนยันว่าได้รับออเดอร์แล้ว
+// ลูกค้าทั่วไปกดยืนยันว่าได้รับออเดอร์แล้ว (อัปเดตสถานะแล้วหายไปจากหน้าลูกค้าอัตโนมัติ)
 router.post('/track-order/receive/:id', async (req, res, next) => {
   try {
     if (mongoose.Types.ObjectId.isValid(req.params.id)) {
       await Order.findByIdAndUpdate(req.params.id, { status: 'ได้รับออเดอร์แล้ว' });
+    }
+    if (req.session.guestOrders) {
+      req.session.guestOrders = req.session.guestOrders.filter(id => id !== req.params.id);
     }
     const q = req.body.q ? `?q=${encodeURIComponent(req.body.q)}` : '';
     res.redirect(`/track-order${q}`);
