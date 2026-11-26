@@ -97,7 +97,7 @@ router.post('/logout', (req, res) => {
   res.redirect('/');
 });
 
-// หน้าประวัติการสั่งซื้อของลูกค้า
+// หน้าประวัติการสั่งซื้อของลูกค้า (สมาชิก)
 router.get('/my-orders', async (req, res, next) => {
   try {
     if (!req.session.user) return res.redirect('/login');
@@ -108,7 +108,7 @@ router.get('/my-orders', async (req, res, next) => {
   }
 });
 
-// ลูกค้ากดยืนยันว่าได้รับออเดอร์แล้ว
+// ลูกค้า (สมาชิก) กดยืนยันว่าได้รับออเดอร์แล้ว
 router.post('/my-orders/receive/:id', async (req, res, next) => {
   try {
     if (!req.session.user) return res.redirect('/login');
@@ -117,6 +117,48 @@ router.post('/my-orders/receive/:id', async (req, res, next) => {
       { status: 'ได้รับออเดอร์แล้ว' }
     );
     res.redirect('/my-orders');
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ================= เช็กสถานะออเดอร์ (สำหรับลูกค้าทั่วไป / ไม่ได้สมัครสมาชิก) =================
+
+router.get('/track-order', async (req, res, next) => {
+  try {
+    const q = (req.query.q || '').trim();
+    const guestOrderIds = req.session.guestOrders || [];
+    let orders = [];
+
+    if (q) {
+      if (mongoose.Types.ObjectId.isValid(q)) {
+        orders = await Order.find({ _id: q }).sort({ createdAt: -1 });
+      } else {
+        orders = await Order.find({
+          $or: [
+            { customerName: { $regex: q, $options: 'i' } },
+            { phone: { $regex: q, $options: 'i' } }
+          ]
+        }).sort({ createdAt: -1 });
+      }
+    } else if (guestOrderIds.length > 0) {
+      orders = await Order.find({ _id: { $in: guestOrderIds } }).sort({ createdAt: -1 });
+    }
+
+    res.render('track-order', { orders, q });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// ลูกค้าทั่วไปกดยืนยันว่าได้รับออเดอร์แล้ว
+router.post('/track-order/receive/:id', async (req, res, next) => {
+  try {
+    if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+      await Order.findByIdAndUpdate(req.params.id, { status: 'ได้รับออเดอร์แล้ว' });
+    }
+    const q = req.body.q ? `?q=${encodeURIComponent(req.body.q)}` : '';
+    res.redirect(`/track-order${q}`);
   } catch (err) {
     next(err);
   }
@@ -217,6 +259,9 @@ router.post('/checkout', async (req, res, next) => {
       items: orderItems,
       totalAmount
     });
+
+    if (!req.session.guestOrders) req.session.guestOrders = [];
+    req.session.guestOrders.push(newOrder._id.toString());
 
     req.session.cart = {};
     res.render('order-success', { order: newOrder });
